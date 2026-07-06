@@ -1,0 +1,92 @@
+# terminal_styles
+
+> Small Ada library crate for ANSI terminal text decoration helpers.
+
+terminal_styles provides one public package, `Terminal_Styles`, with helpers for semantic
+status-line formatting and explicit ANSI SGR styling. It is intended for CLI
+programs that need consistent colorized output while respecting `NO_COLOR` and
+TTY-aware color behavior.
+
+## Primary Files
+
+- `README.md`: user documentation, dependency instructions, API summary, build/test commands
+- `src/terminal_styles.ads`: public API specification
+- `src/terminal_styles.adb`: implementation
+- `tests/`: AUnit test crate
+- `examples/basic/`: minimal consumer example crate
+- `LICENSE`: MIT OR Apache-2.0 WITH LLVM-exception
+- `alire.toml`: Alire package metadata
+
+## Public API
+
+Package: `Terminal_Styles`
+
+Types:
+
+- `Style_Role`: `Role_Info`, `Role_Success`, `Role_Error`, `Role_Warning`, `Role_Muted`, `Role_Header`
+- `Text_Decoration`: ANSI text decorations such as bold, italic, underline, reverse, conceal, crossed out, framed, encircled, overlined, and reset/disable variants
+- `Terminal_Color`: default, standard 8 ANSI colors, and bright 8 ANSI colors
+- `Color_Policy`: `Color_Auto`, `Color_Always`, `Color_Never`
+
+Operations:
+
+- `Set_Color_Policy`: set the process-wide color policy
+- `Current_Color_Policy`: read the process-wide color policy
+- `Color_Enabled`: report whether ANSI styling should currently be emitted
+- `Decorate`: wrap text with ANSI SGR sequences by role, decoration, colors, or decoration plus colors
+- `Marker`: return an ASCII marker for a semantic role
+- `Line`: return a role marker plus decorated text
+
+## Behavior Notes
+
+- Default color policy is `Color_Auto`.
+- `Color_Auto` emits ANSI styling only when stdout is a TTY and `NO_COLOR` is not set.
+- `Color_Always` emits ANSI styling regardless of `NO_COLOR` and TTY detection.
+- `Color_Never` suppresses ANSI styling.
+- `Set_Color_Policy` changes process-wide library state; tests or callers that force it should restore the prior value.
+- `Line` keeps ASCII markers even when ANSI styling is disabled.
+
+## Ada Usage
+
+```ada
+with Ada.Text_IO;
+with Terminal_Styles;
+
+procedure Demo is
+begin
+   Ada.Text_IO.Put_Line (Terminal_Styles.Line ("ready", Terminal_Styles.Role_Success));
+   Ada.Text_IO.Put_Line
+     (Terminal_Styles.Decorate
+        ("warning",
+         Terminal_Styles.Decoration_Bold,
+         Terminal_Styles.Color_Yellow));
+end Demo;
+```
+
+## Build And Test
+
+Toolchain rule: every active manifest pins `gnat_native = "=15.2.1"`. Do not
+run plain system GNAT/GPR tools; use `alr exec -- ...` and require
+`alr exec -- gnatls --version` to report `GNATLS 15.x`.
+
+```sh
+alr exec -- gnatls --version
+alr build
+cd tests
+alr build
+./bin/tests
+```
+
+Example crate:
+
+```sh
+cd examples/basic
+alr build
+./bin/terminal_styles_basic_example
+```
+
+## Scope
+
+terminal_styles does not handle terminal capability databases, Windows console mode
+setup, cursor movement, layouts, prompts, progress bars, or rich terminal UI.
+It only formats strings with ANSI SGR codes and role markers.

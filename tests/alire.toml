@@ -1,0 +1,15 @@
+name = "terminal_styles_tests"
+description = "Test suite for terminal_styles"
+version = "0.1.0-dev"
+
+executables = ["tests"]
+
+[[depends-on]]
+gnat_native = "=15.2.1"
+aunit = "*"
+project_tools = "*"
+terminal_styles = "*"
+
+[[pins]]
+project_tools = { path='../../project_tools' }
+terminal_styles = { path='..' }

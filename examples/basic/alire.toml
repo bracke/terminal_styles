@@ -1,0 +1,10 @@
+name = "terminal_styles_basic_example"
+description = "Basic terminal_styles formatting example"
+version = "0.1.0-dev"
+
+[[depends-on]]
+gnat_native = "=15.2.1"
+terminal_styles = "*"
+
+[[pins]]
+terminal_styles = { path = "../.." }

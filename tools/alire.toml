@@ -1,0 +1,12 @@
+name = "terminal_styles_check_all"
+description = "release checklist alias for terminal_styles"
+version = "0.1.0-dev"
+
+executables = ["check_all", "check_all_selftest"]
+
+[[depends-on]]
+gnat_native = "=15.2.1"
+project_tools = "*"
+
+[[pins]]
+project_tools = { path = "../../project_tools" }

@@ -1,0 +1,45 @@
+# Alire/generated project files
+/alire/
+/config/
+
+# Build output
+/obj/
+/lib/
+/bin/
+
+# Test crate generated files
+/tests/alire/
+/tests/config/
+/tests/obj/
+/tests/lib/
+/tests/bin/
+
+# Example crate generated files
+/examples/*/alire/
+/examples/*/config/
+/examples/*/obj/
+/examples/*/lib/
+/examples/*/bin/
+
+# Editor/OS noise
+*~
+*.swp
+.DS_Store
+
+# check_terminal_styles generated files
+/check_terminal_styles/alire/
+/check_terminal_styles/config/
+/check_terminal_styles/obj/
+/check_terminal_styles/bin/
+/obj/gnatprove/
+/lib/gnatprove/
+*.cswi
+*.stdout
+*.stderr
+*.bak
+*.tmp
+*.kate-swp
+/tools/obj/
+/tools/bin/
+/tools/alire/
+/tools/config/
