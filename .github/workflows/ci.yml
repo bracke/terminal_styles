@@ -21,14 +21,18 @@ jobs:
           path: project_tools
       - name: Set up Alire
         uses: alire-project/setup-alire@v5
-      - name: Install Ada toolchain
+        with:
+          toolchain: gnat_native=15.2.1 gprbuild
+      - name: Install GNATprove
+        # The aggregate checker runs gnatprove; it is a regular Alire crate, not a
+        # toolchain component, and apt has no reliable package (the old fallback dropped
+        # it silently, so gnatprove was then missing).
         run: |
-          sudo apt-get update
-          sudo apt-get install -y gnat gprbuild gnatprove || sudo apt-get install -y gnat gprbuild
-          sudo apt-get install -y libaunit-dev || sudo apt-get install -y libaunit22-dev || sudo apt-get install -y libaunit24-dev
+          alr install gnatprove
+          echo "$HOME/.alire/bin" >> "$GITHUB_PATH"
       - name: Build aggregate release checker
         working-directory: terminal_styles/tools
-        run: alr build
+        run: alr --non-interactive build
       - name: Self-test aggregate release checker
         working-directory: terminal_styles
         run: tools/bin/check_all_selftest
