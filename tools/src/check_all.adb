@@ -68,7 +68,10 @@ begin
 
    Project_Tools.Release_Checks.Require_File (Checks, "terminal_styles.gpr");
    Project_Tools.Release_Checks.Require_File (Checks, "check_terminal_styles/check_terminal_styles.gpr");
-   Project_Tools.Release_Checks.Require_File (Checks, "tools/tools.gpr");
+   --  tools/tools.gpr was an unreferenced byte-identical twin of
+   --  terminal_styles_check_all.gpr, declaring the same project name in the
+   --  same directory. It was removed; assert on the file Alire actually builds.
+   Project_Tools.Release_Checks.Require_File (Checks, "tools/terminal_styles_check_all.gpr");
 
    Project_Tools.Release_Checks.Run
      ("build check_terminal_styles", Root & "/check_terminal_styles", Alr, [1 => new String'("build")]);

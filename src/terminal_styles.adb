@@ -2,7 +2,6 @@ with Ada.Environment_Variables;
 with Interfaces.C_Streams;
 
 package body Terminal_Styles is
-   use type Interfaces.C_Streams.int;
 
    Escape : constant String := Character'Val (27) & "[";
    Reset  : constant String := Escape & "0m";

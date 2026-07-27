@@ -15,3 +15,9 @@ gnat_native = "=15.2.1"
 [[actions]]
 type = "test"
 command = ["sh", "-c", "cd tests && alr build && ./bin/tests"]
+
+# Build dependencies in the development profile (-Og) too, not the default
+# release (-O3). Keeping every root on the same profile lets them share object
+# files instead of forcing a rebuild whenever a different root is built.
+[build-profiles]
+"*" = "development"

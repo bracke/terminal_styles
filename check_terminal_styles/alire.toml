@@ -13,7 +13,12 @@ executables = ["check_terminal_styles"]
 
 [[depends-on]]
 gnat_native = "=15.2.1"
+
+[[depends-on]]
 project_tools = "*"
 
 [[pins]]
 project_tools = { path = "../../project_tools" }
+
+[build-profiles]
+"*" = "development"

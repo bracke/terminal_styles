@@ -323,7 +323,9 @@ package body Terminal_Styles.Decorations.Tests is
       Terminal_Styles.Set_Color_Policy (Terminal_Styles.Color_Never);
       begin
          Assert (not Terminal_Styles.Color_Enabled, "focused color never disables color");
-         Assert (Terminal_Styles.Decorate ("text", Terminal_Styles.Role_Error) = "text", "focused color never plain text");
+         Assert
+              (Terminal_Styles.Decorate ("text", Terminal_Styles.Role_Error) = "text",
+               "focused color never plain text");
       exception
          when others =>
             Terminal_Styles.Set_Color_Policy (Saved_Policy);
@@ -342,7 +344,9 @@ package body Terminal_Styles.Decorations.Tests is
       begin
          Ada.Environment_Variables.Clear ("NO_COLOR");
          Terminal_Styles.Set_Color_Policy (Terminal_Styles.Color_Always);
-         Assert (Terminal_Styles.Decorate ("x", Terminal_Styles.Decoration_Bold) = Escape & "1mx" & Reset, "focused bold code");
+         Assert
+              (Terminal_Styles.Decorate ("x", Terminal_Styles.Decoration_Bold) = Escape & "1mx" & Reset,
+               "focused bold code");
       exception
          when others =>
             Terminal_Styles.Set_Color_Policy (Saved_Policy);
@@ -363,7 +367,9 @@ package body Terminal_Styles.Decorations.Tests is
       begin
          Ada.Environment_Variables.Clear ("NO_COLOR");
          Terminal_Styles.Set_Color_Policy (Terminal_Styles.Color_Always);
-         Assert (Terminal_Styles.Decorate ("x", Terminal_Styles.Color_Red) = Escape & "31;49mx" & Reset, "focused red foreground");
+         Assert
+              (Terminal_Styles.Decorate ("x", Terminal_Styles.Color_Red) = Escape & "31;49mx" & Reset,
+               "focused red foreground");
       exception
          when others =>
             Terminal_Styles.Set_Color_Policy (Saved_Policy);

@@ -1,4 +1,5 @@
 with Terminal_Styles.Decorations.Tests;
+with AUnit.Test_Cases;
 
 package body Terminal_Suite is
 
@@ -6,9 +7,7 @@ package body Terminal_Suite is
       Result : constant AUnit.Test_Suites.Access_Test_Suite
          := AUnit.Test_Suites.New_Suite;
    begin
-      pragma Warnings (Off, "use of an anonymous access type allocator");
-      Result.Add_Test (new Terminal_Styles.Decorations.Tests.Terminal_Format_Test);
-      pragma Warnings (On, "use of an anonymous access type allocator");
+      Result.Add_Test (AUnit.Test_Cases.Test_Case_Access'(new Terminal_Styles.Decorations.Tests.Terminal_Format_Test));
 
       return Result;
    end Suite;
