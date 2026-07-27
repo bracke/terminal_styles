@@ -39,3 +39,51 @@ jobs:
       - name: Run aggregate release checker
         working-directory: terminal_styles
         run: tools/bin/check_all
+
+  # macOS and Windows verify the library and its AUnit suite build and run
+  # natively. terminal_styles is pure Ada (terminal text decoration), so no
+  # system libraries are needed; the GNATprove release checklist above stays
+  # Linux-only.
+  macos-build-check:
+    name: macOS native build check
+    # macos-latest is arm64; gnat_native=15.2.1 ships no aarch64-darwin binary.
+    runs-on: macos-15-intel
+    steps:
+      - uses: actions/checkout@v7
+        with: { path: terminal_styles }
+      - uses: actions/checkout@v7
+        with: { repository: "${{ github.repository_owner }}/project_tools", path: project_tools }
+      - name: Set up Alire
+        uses: alire-project/setup-alire@v6
+        with:
+          toolchain: gnat_native=15.2.1 gprbuild
+      - name: Build terminal_styles
+        working-directory: terminal_styles
+        run: alr --non-interactive build
+      - name: Build and run the test suite
+        working-directory: terminal_styles/tests
+        run: |
+          alr --non-interactive build
+          ./bin/tests
+
+  windows-build-check:
+    name: Windows native build check
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v7
+        with: { path: terminal_styles }
+      - uses: actions/checkout@v7
+        with: { repository: "${{ github.repository_owner }}/project_tools", path: project_tools }
+      - name: Set up Alire
+        uses: alire-project/setup-alire@v6
+        with:
+          toolchain: gnat_native=15.2.1 gprbuild
+      - name: Build terminal_styles
+        working-directory: terminal_styles
+        run: alr --non-interactive build
+      - name: Build and run the test suite
+        working-directory: terminal_styles/tests
+        shell: bash
+        run: |
+          alr --non-interactive build
+          ./bin/tests.exe
