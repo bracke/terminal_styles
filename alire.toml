@@ -1,5 +1,5 @@
 name = "terminal_styles"
-description = "Terminal text decoration helpers"
+description = "ANSI terminal styling: semantic roles, colours, TTY-aware policy"
 version = "0.1.0-dev"
 
 authors = ["Bent Bracke"]
@@ -7,6 +7,7 @@ maintainers = ["Bent Bracke <bent@bracke.dk>"]
 maintainers-logins = ["bracke"]
 licenses = "MIT"
 website = "https://github.com/bracke/terminal_styles"
+long-description = "terminal_styles is ANSI terminal decoration for programs that write status output: semantic roles such as info, success, error, warning, muted and header; explicit decorations including bold, faint, italic, underline, blink, inverse, hidden and strike; foreground and background colours with their bright variants; and ASCII markers for output that has to survive a pipe. Colour policy is TTY-aware and explicit -- automatic, always, or never -- so a program can honour a terminal, a redirect and a user's preference without each caller deciding for itself."
 tags = ["terminal", "ansi", "color"]
 
 [[depends-on]]
