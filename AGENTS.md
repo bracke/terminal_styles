@@ -43,7 +43,8 @@ alr build
 ## Behavioral Contracts
 
 - Default policy is `Color_Auto`.
-- `Color_Auto` honors `NO_COLOR` and stdout TTY detection.
+- `Color_Auto` honors `NO_COLOR` and stdout TTY detection for the default API.
+- Destination-aware overloads honor `NO_COLOR` and the caller-supplied terminal state.
 - `Color_Always` must ignore `NO_COLOR` and TTY detection.
 - `Color_Never` must suppress ANSI output.
 - `Set_Color_Policy` is process-wide state; tests that change it should restore it.

@@ -40,7 +40,8 @@ Operations:
 ## Behavior Notes
 
 - Default color policy is `Color_Auto`.
-- `Color_Auto` emits ANSI styling only when stdout is a TTY and `NO_COLOR` is not set.
+- `Color_Auto` emits ANSI styling only when stdout is a TTY and `NO_COLOR` is not set for the default API.
+- Destination-aware overloads emit ANSI styling only when the caller-supplied destination is a terminal and `NO_COLOR` is not set.
 - `Color_Always` emits ANSI styling regardless of `NO_COLOR` and TTY detection.
 - `Color_Never` suppresses ANSI styling.
 - `Set_Color_Policy` changes process-wide library state; tests or callers that force it should restore the prior value.

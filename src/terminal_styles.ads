@@ -79,10 +79,22 @@ package Terminal_Styles is
    --  @return Active color policy.
    function Current_Color_Policy return Color_Policy;
 
-   --  Return whether ANSI color output is enabled by the current policy.
+   --  Return whether ANSI color output is enabled by the current policy for
+   --  stdout.
    --
    --  @return True when ANSI color output should be emitted.
    function Color_Enabled return Boolean;
+
+   --  Return whether ANSI color output is enabled by the current policy for a
+   --  caller-specified output destination.
+   --
+   --  Color_Auto emits ANSI styling only when NO_COLOR is not set and
+   --  Destination_Is_Terminal is True. Color_Always ignores NO_COLOR and
+   --  Destination_Is_Terminal. Color_Never always suppresses ANSI styling.
+   --
+   --  @param Destination_Is_Terminal True when the output destination is a terminal.
+   --  @return True when ANSI color output should be emitted for that destination.
+   function Color_Enabled (Destination_Is_Terminal : Boolean) return Boolean;
 
    --  Return Item decorated for the requested terminal role.
    --
@@ -93,6 +105,17 @@ package Terminal_Styles is
      (Item : String;
       Role : Style_Role) return String;
 
+   --  Return Item decorated for the requested terminal role and destination.
+   --
+   --  @param Item Text to decorate.
+   --  @param Role Semantic role used to choose terminal styling.
+   --  @param Destination_Is_Terminal True when the output destination is a terminal.
+   --  @return Item with ANSI styling when color is enabled; otherwise Item.
+   function Decorate
+     (Item : String;
+      Role : Style_Role;
+      Destination_Is_Terminal : Boolean) return String;
+
    --  Return Item decorated with the requested ANSI text decoration.
    --
    --  @param Item Text to decorate.
@@ -101,6 +124,18 @@ package Terminal_Styles is
    function Decorate
      (Item       : String;
       Decoration : Text_Decoration) return String;
+
+   --  Return Item decorated with the requested ANSI text decoration and
+   --  destination.
+   --
+   --  @param Item Text to decorate.
+   --  @param Decoration ANSI text decoration to apply.
+   --  @param Destination_Is_Terminal True when the output destination is a terminal.
+   --  @return Item with ANSI styling when color is enabled; otherwise Item.
+   function Decorate
+     (Item       : String;
+      Decoration : Text_Decoration;
+      Destination_Is_Terminal : Boolean) return String;
 
    --  Return Item decorated with ANSI foreground and background colors.
    --
@@ -112,6 +147,20 @@ package Terminal_Styles is
      (Item       : String;
       Foreground : Terminal_Color;
       Background : Terminal_Color := Color_Default) return String;
+
+   --  Return Item decorated with ANSI foreground and background colors and
+   --  destination.
+   --
+   --  @param Item Text to decorate.
+   --  @param Foreground ANSI foreground color to apply.
+   --  @param Background ANSI background color to apply.
+   --  @param Destination_Is_Terminal True when the output destination is a terminal.
+   --  @return Item with ANSI styling when color is enabled; otherwise Item.
+   function Decorate
+     (Item       : String;
+      Foreground : Terminal_Color;
+      Background : Terminal_Color;
+      Destination_Is_Terminal : Boolean) return String;
 
    --  Return Item decorated with ANSI text decoration and colors.
    --
@@ -125,6 +174,21 @@ package Terminal_Styles is
       Decoration : Text_Decoration;
       Foreground : Terminal_Color;
       Background : Terminal_Color := Color_Default) return String;
+
+   --  Return Item decorated with ANSI text decoration, colors, and destination.
+   --
+   --  @param Item Text to decorate.
+   --  @param Decoration ANSI text decoration to apply.
+   --  @param Foreground ANSI foreground color to apply.
+   --  @param Background ANSI background color to apply.
+   --  @param Destination_Is_Terminal True when the output destination is a terminal.
+   --  @return Item with ANSI styling when color is enabled; otherwise Item.
+   function Decorate
+     (Item       : String;
+      Decoration : Text_Decoration;
+      Foreground : Terminal_Color;
+      Background : Terminal_Color;
+      Destination_Is_Terminal : Boolean) return String;
 
    --  Return an ASCII status marker for Role.
    --
@@ -141,4 +205,15 @@ package Terminal_Styles is
    function Line
      (Item : String;
       Role : Style_Role) return String;
+
+   --  Return a marked and decorated terminal line for a specific destination.
+   --
+   --  @param Item Text to decorate.
+   --  @param Role Semantic role used to choose marker and terminal styling.
+   --  @param Destination_Is_Terminal True when the output destination is a terminal.
+   --  @return Marked terminal line with optional ANSI styling.
+   function Line
+     (Item : String;
+      Role : Style_Role;
+      Destination_Is_Terminal : Boolean) return String;
 end Terminal_Styles;

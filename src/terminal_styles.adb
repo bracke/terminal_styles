@@ -30,7 +30,7 @@ package body Terminal_Styles is
    function Color_Enabled_For
      (Policy       : Color_Policy;
       No_Color_Set : Boolean;
-      Stdout_TTY   : Boolean) return Boolean
+      Terminal_TTY : Boolean) return Boolean
      with SPARK_Mode => On
    is
    begin
@@ -40,7 +40,7 @@ package body Terminal_Styles is
          when Color_Never =>
             return False;
          when Color_Auto =>
-            return not No_Color_Set and then Stdout_TTY;
+            return not No_Color_Set and then Terminal_TTY;
       end case;
    end Color_Enabled_For;
 
@@ -50,6 +50,17 @@ package body Terminal_Styles is
         (Current_Policy,
          Ada.Environment_Variables.Exists ("NO_COLOR"),
          Stdout_Is_TTY);
+   exception
+      when others =>
+         return False;
+   end Color_Enabled;
+
+   function Color_Enabled (Destination_Is_Terminal : Boolean) return Boolean is
+   begin
+      return Color_Enabled_For
+        (Current_Policy,
+         Ada.Environment_Variables.Exists ("NO_COLOR"),
+         Destination_Is_Terminal);
    exception
       when others =>
          return False;
@@ -71,6 +82,19 @@ package body Terminal_Styles is
    function With_Code (Item : String; Code : String) return String is
    begin
       if Color_Enabled then
+         return SGR_Code (Item, Code);
+      else
+         return Item;
+      end if;
+   end With_Code;
+
+   function With_Code
+     (Item : String;
+      Code : String;
+      Destination_Is_Terminal : Boolean) return String
+   is
+   begin
+      if Color_Enabled (Destination_Is_Terminal) then
          return SGR_Code (Item, Code);
       else
          return Item;
@@ -210,6 +234,15 @@ package body Terminal_Styles is
    end Decorate;
 
    function Decorate
+     (Item : String;
+      Role : Style_Role;
+      Destination_Is_Terminal : Boolean) return String
+   is
+   begin
+      return With_Code (Item, Code_For (Role), Destination_Is_Terminal);
+   end Decorate;
+
+   function Decorate
      (Item       : String;
       Decoration : Text_Decoration) return String
    is
@@ -219,11 +252,33 @@ package body Terminal_Styles is
 
    function Decorate
      (Item       : String;
+      Decoration : Text_Decoration;
+      Destination_Is_Terminal : Boolean) return String
+   is
+   begin
+      return With_Code (Item, Code_For (Decoration), Destination_Is_Terminal);
+   end Decorate;
+
+   function Decorate
+     (Item       : String;
       Foreground : Terminal_Color;
       Background : Terminal_Color := Color_Default) return String
    is
    begin
       return With_Code (Item, Foreground_Code (Foreground) & ";" & Background_Code (Background));
+   end Decorate;
+
+   function Decorate
+     (Item       : String;
+      Foreground : Terminal_Color;
+      Background : Terminal_Color;
+      Destination_Is_Terminal : Boolean) return String
+   is
+   begin
+      return With_Code
+        (Item,
+         Foreground_Code (Foreground) & ";" & Background_Code (Background),
+         Destination_Is_Terminal);
    end Decorate;
 
    function Decorate
@@ -238,6 +293,22 @@ package body Terminal_Styles is
          Code_For (Decoration) & ";"
          & Foreground_Code (Foreground) & ";"
          & Background_Code (Background));
+   end Decorate;
+
+   function Decorate
+     (Item       : String;
+      Decoration : Text_Decoration;
+      Foreground : Terminal_Color;
+      Background : Terminal_Color;
+      Destination_Is_Terminal : Boolean) return String
+   is
+   begin
+      return With_Code
+        (Item,
+         Code_For (Decoration) & ";"
+         & Foreground_Code (Foreground) & ";"
+         & Background_Code (Background),
+         Destination_Is_Terminal);
    end Decorate;
 
    function Marker (Role : Style_Role) return String
@@ -266,5 +337,15 @@ package body Terminal_Styles is
    is
    begin
       return Decorate (Marker (Role), Role) & " " & Decorate (Item, Role);
+   end Line;
+
+   function Line
+     (Item : String;
+      Role : Style_Role;
+      Destination_Is_Terminal : Boolean) return String
+   is
+   begin
+      return Decorate (Marker (Role), Role, Destination_Is_Terminal)
+        & " " & Decorate (Item, Role, Destination_Is_Terminal);
    end Line;
 end Terminal_Styles;

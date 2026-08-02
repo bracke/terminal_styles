@@ -77,6 +77,11 @@ only when stdout is a terminal and `NO_COLOR` is not set. `Color_Always` forces
 ANSI output, while `Color_Never` suppresses it. When color is disabled, `Line`
 still includes the ASCII marker.
 
+Destination-aware overloads of `Color_Enabled`, `Decorate`, and `Line` accept a
+caller-supplied terminal-state Boolean. Use those overloads when formatting for
+destinations other than stdout, such as stderr or a caller-managed output
+stream.
+
 `Set_Color_Policy` changes process-wide library state. Set it once during
 program startup, or restore the previous value around tests that need a forced
 policy.
@@ -136,10 +141,10 @@ Functions and procedures:
 
 - `Set_Color_Policy`: set the process-wide color policy
 - `Current_Color_Policy`: return the active color policy
-- `Color_Enabled`: return whether the active policy currently permits ANSI styling
-- `Decorate`: decorate text by role, decoration, colors, or decoration plus colors
+- `Color_Enabled`: return whether the active policy currently permits ANSI styling for stdout or a caller-specified destination
+- `Decorate`: decorate text by role, decoration, colors, or decoration plus colors for stdout or a caller-specified destination
 - `Marker`: return an ASCII marker for a role
-- `Line`: return a marker plus decorated text for a role
+- `Line`: return a marker plus decorated text for a role and optional destination
 
 ## Example Crate
 

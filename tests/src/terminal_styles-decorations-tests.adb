@@ -172,6 +172,63 @@ package body Terminal_Styles.Decorations.Tests is
       Restore_Environment ("NO_COLOR", No_Color_Found, No_Color_Value);
    end Test_Color_Policy;
 
+   procedure Test_Destination_Color_Policy (Item : in out AUnit.Test_Cases.Test_Case'Class) is
+      pragma Unreferenced (Item);
+      No_Color_Found : Boolean;
+      No_Color_Value : Unbounded_String;
+      Saved_Policy   : constant Terminal_Styles.Color_Policy := Terminal_Styles.Current_Color_Policy;
+   begin
+      Save_Environment ("NO_COLOR", No_Color_Found, No_Color_Value);
+      begin
+         Ada.Environment_Variables.Clear ("NO_COLOR");
+         Terminal_Styles.Set_Color_Policy (Terminal_Styles.Color_Auto);
+         Assert
+           (Terminal_Styles.Color_Enabled (Destination_Is_Terminal => True),
+            "Color_Auto enables ANSI color for a terminal destination");
+         Assert
+           (not Terminal_Styles.Color_Enabled (Destination_Is_Terminal => False),
+            "Color_Auto disables ANSI color for a non-terminal destination");
+         Assert
+           (Terminal_Styles.Decorate
+              ("x", Terminal_Styles.Role_Error, Destination_Is_Terminal => True)
+            = Escape & "31;1mx" & Reset,
+            "destination-aware role decoration styles terminal output");
+         Assert
+           (Terminal_Styles.Decorate
+              ("x", Terminal_Styles.Role_Error, Destination_Is_Terminal => False)
+            = "x",
+            "destination-aware role decoration leaves non-terminal output plain");
+         Assert
+           (Terminal_Styles.Line
+              ("failed", Terminal_Styles.Role_Error, Destination_Is_Terminal => True)
+            = Escape & "31;1m[!]" & Reset & " " & Escape & "31;1mfailed" & Reset,
+            "destination-aware line styles terminal output");
+
+         Ada.Environment_Variables.Set ("NO_COLOR", "1");
+         Assert
+           (not Terminal_Styles.Color_Enabled (Destination_Is_Terminal => True),
+            "NO_COLOR disables destination-aware auto color");
+
+         Terminal_Styles.Set_Color_Policy (Terminal_Styles.Color_Always);
+         Assert
+           (Terminal_Styles.Color_Enabled (Destination_Is_Terminal => False),
+            "Color_Always ignores destination terminal state");
+
+         Terminal_Styles.Set_Color_Policy (Terminal_Styles.Color_Never);
+         Assert
+           (not Terminal_Styles.Color_Enabled (Destination_Is_Terminal => True),
+            "Color_Never disables destination-aware color");
+      exception
+         when others =>
+            Terminal_Styles.Set_Color_Policy (Saved_Policy);
+            Restore_Environment ("NO_COLOR", No_Color_Found, No_Color_Value);
+            raise;
+      end;
+
+      Terminal_Styles.Set_Color_Policy (Saved_Policy);
+      Restore_Environment ("NO_COLOR", No_Color_Found, No_Color_Value);
+   end Test_Destination_Color_Policy;
+
    procedure Test_Decorations (Item : in out AUnit.Test_Cases.Test_Case'Class) is
       pragma Unreferenced (Item);
       No_Color_Found : Boolean;
@@ -412,6 +469,7 @@ package body Terminal_Styles.Decorations.Tests is
       Register_Routine (Item, Test_Info_Marker'Access, "focused info marker");
       Register_Routine (Item, Test_Error_Marker'Access, "focused error marker");
       Register_Routine (Item, Test_Color_Policy'Access, "color policy controls ANSI output");
+      Register_Routine (Item, Test_Destination_Color_Policy'Access, "destination-aware color policy");
       Register_Routine (Item, Test_Color_Never_Disables_Output'Access, "focused Color_Never policy");
       Register_Routine (Item, Test_Color_Always_Emits_Bold'Access, "focused bold decoration");
       Register_Routine (Item, Test_Decorations'Access, "ANSI decoration codes");
