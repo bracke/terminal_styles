@@ -4,6 +4,8 @@ with Ada.Exceptions;
 with Ada.Strings.Unbounded;
 with Ada.Text_IO;
 
+with GNAT.OS_Lib;
+
 with Project_Tools.Processes;
 with Project_Tools.Release_Checks;
 with Project_Tools.Text;
@@ -38,7 +40,9 @@ procedure Check_All is
           ("verify Alire-selected GNAT 15 toolchain",
            Root,
            Alr,
-           [new String'("exec"), new String'("--"), new String'("gnatls"), new String'("--version")],
+           GNAT.OS_Lib.Argument_List'
+             [new String'("exec"), new String'("--"),
+              new String'("gnatls"), new String'("--version")],
            Output,
            Quiet => False);
 
